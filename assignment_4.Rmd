@@ -1,0 +1,67 @@
+---
+title: "assignment_4"
+author: "Alyssa Kibbe"
+date: "11/13/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(here)
+library(lubridate)
+```
+
+```{r}
+hares <- read.csv(here("data", "bonanza_hares.csv"))
+```
+
+
+```{r}
+juvenile <- hares %>%
+  filter(age == "j") %>% 
+  mutate(date_new = mdy(date)) %>% 
+  mutate(year = year(date_new)) %>% 
+  mutate(day = day(date_new))
+
+juvenile_per_year <- juvenile %>% 
+  group_by(year) %>% 
+  summarize(count_per_year = n())
+
+ggplot(juvenile_per_year, aes(x =  year, y = count_per_year))+
+  geom_col(fill = "goldenrod3",
+          color = "goldenrod4" )+
+  labs( x = "", y = "Hare Count", 
+        title = "Variation in Juvenile Hare Count from 1999 to 2012")+
+  theme_bw()
+
+
+```
+
+
+##### **Figure 1: Count of juvenile snowshoe hares over a 13 year period.** Populations counted at five sites along Bonanza Riparian zone on the Tanana River. 2002 and 2009 are excluded from the data set.  
+
+### As seen in Figure 1, there is large variation in the snowshoe hare populations (min = 2 (2010), max = 126 (1999)). The overall trend of the data is skewed to the right. The mean number of snowshoe hare is 31 individuals counted per year. Median = 18.5. There are inconsistencies in the data that may have influences the results. In 2000, data was collected on 11 different days while in 2012, data was only collected on 2 days. For future collections, it would be beneficial to have a consistent number of sampling days each year.      
+
+```{r}
+# juvenile weights
+ggplot(data = juvenile, aes(x = grid, y = weight))+
+  geom_jitter(aes(color = sex), )+
+  labs(x = "Sample Site", y = "Weight (grams)", title = "Juvenile Snowshoe Hare Weight at Three Sampling Sites", colour = "Sex")
+
+```
+
+
+
+##### **Figure 2: Variation in weight between males and females at three sampling sites.** "bonbs" is  the sampling site consisting of lowland black spruce, "bonmat" or Bonanza Mature is a forested area filled with mature tree species. "bonrip" or Bonanza Riparian is the flood zone from the Tanana River. 
+
+
+
+
+
+
+
+
+
+
+
