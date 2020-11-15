@@ -4,15 +4,17 @@ author: "Alyssa Kibbe"
 date: "11/13/2020"
 output: html_document
 ---
-
+# Exoloration of Snowshoe Hares
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 library(tidyverse)
 library(here)
 library(lubridate)
 library(kableExtra)
+library(effsize)
 ```
-
+## Introduction : 
+####The study of snowshoe hares at five locations in the Tanana Valley hoped to look at comparisons in populations over the five year testing period. It is known that snowshoe hares population have large fluctuations every 8-11 years. This study hoped to produce qualitiative data while observing the same populations over multiple years. The experimental variables included sex, age, weight (gm), hind foot length (mm), animal identifer, study type, and any unique notes on the individual hare.
 ```{r}
 hares <- read.csv(here("data", "bonanza_hares.csv"))
 ```
@@ -48,7 +50,8 @@ ggplot(juvenile_per_year, aes(x =  year, y = count_per_year))+
 # juvenile weights
 ggplot(data = juvenile, aes(x = grid, y = weight))+
   geom_boxplot(aes(color = sex), )+
-  labs(x = "Sample Site", y = "Weight (grams)", title = "Juvenile Snowshoe Hare Weight at Three Sampling Sites", colour = "Sex")
+  labs(x = "Sample Site", y = "Weight (grams)", title = "Juvenile Snowshoe Hare Weight at Three Sampling Sites", colour = "Sex")+
+  theme_bw()
 ```
 
 ##### **Figure 2: Variation in weight between males and females at three sampling sites.** "bonbs" is  the sampling site consisting of lowland black spruce, "bonmat" or Bonanza Mature is a forested area filled with mature tree species. "bonrip" or Bonanza Riparian is the flood zone from the Tanana River. NA represents individuals with unidentified sex.
@@ -57,16 +60,18 @@ ggplot(data = juvenile, aes(x = grid, y = weight))+
 ggplot(data = juvenile, aes(x = grid, y = weight))+
   geom_jitter(aes(color = grid), alpha = 0.7)+
   labs(x = "Sample Site", y = "Weight (grams)", title = "Juvenile Snowshoe Hare Weight Distribution by Sex", colour = "Sampling Site")+
-  facet_wrap(~sex)
+  facet_wrap(~sex)+
+  theme_bw()
 ```
 
 
 
 ##### **Figure 3: Weight distribution of males and females at three sampling sites.** "bonbs" is  the sampling site consisting of lowland black spruce, "bonmat" or Bonanza Mature is a forested area filled with mature tree species. "bonrip" or Bonanza Riparian is the flood zone from the Tanana River.NA represents individuals with unidentified sex.
 
-#### As seen in Figures 2, juvenile male hares have an greater average weight than females. In addition, the weights across the three locations show similar trends.However, there is the greatest difference in average weight in the Bonanza Mature sample population. The Bonanaza Riparian zone has the greatest number of sample points and thus has that largest variation in hare weights. 
+### As seen in Figures 2, juvenile male hares have an greater average weight than females. In addition, the weights across the three locations show similar trends.However, there is the greatest difference in average weight in the Bonanza Mature sample population. The Bonanaza Riparian zone has the greatest number of sample points and thus has that largest variation in hare weights. 
 
 
+##### Table 1: **Summary stastics for juvenile snowshoe hares.** NA values for weight for a specific sex were excluded. NA values in table represent individual hares with unknown sex.
 ```{r}
 juvenile_summary <- juvenile %>% 
   group_by(sex) %>% 
@@ -76,6 +81,45 @@ juvenile_summary <- juvenile %>%
 kbl(juvenile_summary) %>% 
   kable_styling()
 ```
+
+The actual difference in male and female average weight is 90.468 grams. This is a percent difference of 10.05% between the two sexes. The t-test comparison of the difference in mean weight of male and female hares resulted in a p-value of 0.007. This means that there is a 0.7% chance of taking random samples from populations with the same mean and finding sample means as different as those found here. The Cohen's D test indicates that the effect size is small.  
+
+```{r, include= FALSE}
+ggplot(juvenile, aes(sample = weight))+
+  geom_qq()
+```
+
+
+```{r}
+juvenile_f <- juvenile %>% 
+  filter(sex == "f") %>% 
+  pull(weight)
+
+juvenile_f <- na.omit(juvenile_f)
+
+juvenile_m <- juvenile %>% 
+  filter(sex == "m") %>% 
+  pull(weight)
+
+juvenile_ttest <- t.test(juvenile_m, juvenile_f)
+juvenile_ttest
+
+cohen.d(juvenile_m, juvenile_f)
+```
+
+### Exploring the relationship between juvenile weight and hind foot length
+
+```{r}
+ggplot(data = juvenile, aes(x = hindft, y = weight))+
+  geom_point(color = "goldenrod3")+
+  labs(x = "Hind Foot Length (mm)", y = "Weight (grams)", title = "Juvenile Snowshoe Hare Weight at Three Sampling Sites", colour = "Sex")+
+  theme_bw()
+```
+
+
+
+
+
 
 
 
