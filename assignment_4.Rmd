@@ -146,7 +146,7 @@ ggplot(data = juvenile, aes(x = hindft, y = weight))+
   geom_smooth(method = "lm",
               color = "goldenrod3",
               size = 0.5,
-              fill = "gray5",
+              fill = "azure4",
               alpha = 0.5)+
   theme_bw()+
   ggpubr::stat_regline_equation(label.x = 110, label.y = 2000)+
