@@ -6,10 +6,11 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 library(tidyverse)
 library(here)
 library(lubridate)
+library(kableExtra)
 ```
 
 ```{r}
@@ -46,19 +47,35 @@ ggplot(juvenile_per_year, aes(x =  year, y = count_per_year))+
 ```{r}
 # juvenile weights
 ggplot(data = juvenile, aes(x = grid, y = weight))+
-  geom_jitter(aes(color = sex), )+
+  geom_boxplot(aes(color = sex), )+
   labs(x = "Sample Site", y = "Weight (grams)", title = "Juvenile Snowshoe Hare Weight at Three Sampling Sites", colour = "Sex")
+```
 
+##### **Figure 2: Variation in weight between males and females at three sampling sites.** "bonbs" is  the sampling site consisting of lowland black spruce, "bonmat" or Bonanza Mature is a forested area filled with mature tree species. "bonrip" or Bonanza Riparian is the flood zone from the Tanana River. NA represents individuals with unidentified sex.
+
+```{r}
+ggplot(data = juvenile, aes(x = grid, y = weight))+
+  geom_jitter(aes(color = grid), alpha = 0.7)+
+  labs(x = "Sample Site", y = "Weight (grams)", title = "Juvenile Snowshoe Hare Weight Distribution by Sex", colour = "Sampling Site")+
+  facet_wrap(~sex)
 ```
 
 
 
-##### **Figure 2: Variation in weight between males and females at three sampling sites.** "bonbs" is  the sampling site consisting of lowland black spruce, "bonmat" or Bonanza Mature is a forested area filled with mature tree species. "bonrip" or Bonanza Riparian is the flood zone from the Tanana River. 
+##### **Figure 3: Weight distribution of males and females at three sampling sites.** "bonbs" is  the sampling site consisting of lowland black spruce, "bonmat" or Bonanza Mature is a forested area filled with mature tree species. "bonrip" or Bonanza Riparian is the flood zone from the Tanana River.NA represents individuals with unidentified sex.
+
+#### As seen in Figures 2, juvenile male hares have an greater average weight than females. In addition, the weights across the three locations show similar trends.However, there is the greatest difference in average weight in the Bonanza Mature sample population. The Bonanaza Riparian zone has the greatest number of sample points and thus has that largest variation in hare weights. 
 
 
-
-
-
+```{r}
+juvenile_summary <- juvenile %>% 
+  group_by(sex) %>% 
+  summarize(mean_weight = mean(weight,na.rm=T),
+            sd_weight = sd(weight, na.rm=T),
+            sample_size = n())
+kbl(juvenile_summary) %>% 
+  kable_styling()
+```
 
 
 
