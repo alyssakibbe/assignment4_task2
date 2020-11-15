@@ -12,9 +12,11 @@ library(here)
 library(lubridate)
 library(kableExtra)
 library(effsize)
+library(broom)
+library(ggpubr)
 ```
 ## Introduction : 
-####The study of snowshoe hares at five locations in the Tanana Valley hoped to look at comparisons in populations over the five year testing period. It is known that snowshoe hares population have large fluctuations every 8-11 years. This study hoped to produce qualitiative data while observing the same populations over multiple years. The experimental variables included sex, age, weight (gm), hind foot length (mm), animal identifer, study type, and any unique notes on the individual hare.
+#### The study of snowshoe hares at five locations in the Tanana Valley hoped to look at comparisons in populations over the five year testing period. It is known that snowshoe hares population have large fluctuations every 8-11 years. This study hoped to produce qualitiative data while observing the same populations over multiple years. The experimental variables included sex, age, weight (gm), hind foot length (mm), animal identifer, study type, and any unique notes on the individual hare.
 ```{r}
 hares <- read.csv(here("data", "bonanza_hares.csv"))
 ```
@@ -109,20 +111,32 @@ cohen.d(juvenile_m, juvenile_f)
 
 ### Exploring the relationship between juvenile weight and hind foot length
 
+
 ```{r}
-ggplot(data = juvenile, aes(x = hindft, y = weight))+
-  geom_point(color = "goldenrod3")+
-  labs(x = "Hind Foot Length (mm)", y = "Weight (grams)", title = "Juvenile Snowshoe Hare Weight at Three Sampling Sites", colour = "Sex")+
-  theme_bw()
+juveniles_lm <- lm(weight ~ hindft, data = juvenile)
+summary(juveniles_lm)
+plot(juveniles_lm)
 ```
 
+```{r}
+ggplot(data = juvenile, aes(x = hindft, y = weight))+
+  geom_point(size = 2)+
+  geom_smooth(method = "lm",
+              color = "goldenrod3",
+              size = 0.5,
+              fill = "gray10",
+              alpha = 0.5)+
+  theme_bw()+
+  ggpubr::stat_regline_equation(label.x = 110, label.y = 2000)+
+  labs(x = "Hind Foot Length (mm)", y = " Weight (grams)", title = "Relationship Between Juvenile Hind Foot Length and Weight")
+```
+
+##### **Figure 4: The relationship between juvenile weight and hind foot length in snowshoe hares.** Data from all three sampling sites were combined.
 
 
+### Adding a linear model to the data finds a Mulitple R^2 value of 0.2988. This means that about 30% of the variance of juvenile weight is explained by juvenile hind foot length. The full equation for the linear model is weight = 9.5234*(hind foot length) + (-279.3419). The Pearson's test finds a weak correlation between hind foot length and weight (r= 0.547, t(247) = 10.26, p < 0.001). One assumption to be concerned with our data is homoscedasticity because there is variance among the amount that the points differ from the model. 
 
-
-
-
-
-
-
+```{r}
+juvenile_cor <- cor.test(juvenile$hindft, juvenile$weight)
+```
 
