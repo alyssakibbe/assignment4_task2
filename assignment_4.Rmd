@@ -14,11 +14,12 @@ library(effsize)
 library(broom)
 library(ggpubr)
 ```
-## Introduction : 
-#### The study of snowshoe hares at locations in the Tanana Valley hoped to look at comparisons in populations over the thirteen year testing period. It is known that snowshoe hares population have large fluctuations every 8-11 years (Kiellan et al. 2017). This study hoped to produce qualitiative data while observing the same populations over multiple years. Analysis of the data set found the relationship between juvenile hares and weight by sex as well as the relationship between juvenile weight and hind foot length. 
+## 1. Introduction : 
+This report explores the relationship between juvenile snowshoe hare size at three testing locations in the Tanana Valley from 1999 to 2012 (Kiellan et al. 2017). Juvenile hare weights is compared between males and females at each of the testing sites. In addition, juvenile hare weight was compared to hind foot length. All relationships in this report focus on the juvenile hares from the larger data set. 
+ 
 
-## Data and analyses:
-The data measures quantitative characteristics of the snowshow hares observed at each field site. Experimental variables include, weight, hind foot length, age, sex, and unique identifiers. Analyses used in the report include graphical representations of relationships, t-tests for variance, and correlation tests. RStudio version 1.3.1073 was used to complete all analyses. 
+## 2. Data and analyses:
+The data was collected by Knut Kielland and their team in the Tanana valley in Alaska. The data measures quantitative characteristics of the snowshow hares observed at each field site. Experimental variables include, weight, hind foot length, age, sex, and unique identifiers. Analyses used in the report include graphical representations of relationships, t-tests for variance, and correlation tests. T-tests were conducted to find the relationship between the sex and weight of the juvenile hare. Cohen's d test was used to calculate the effect size. The relationship between weight and hind foot length was observed by creating a linear regression model. RStudio version 1.3.1073 was used to complete all analyses.
 ```{r}
 hares <- read.csv(here("data", "bonanza_hares.csv"))
 ```
@@ -40,7 +41,7 @@ juvenile_per_year <- juvenile %>%
 ggplot(juvenile_per_year, aes(x =  year, y = count_per_year))+
   geom_col(fill = "goldenrod3",
           color = "goldenrod4" )+
-  labs( x = "", y = "Hare Count", 
+  labs( x = "", y = "Hare Count (individuals)", 
         title = "Variation in Juvenile Hare Count from 1999 to 2012")+
   theme_bw()
 
@@ -52,8 +53,8 @@ ggplot(juvenile_per_year, aes(x =  year, y = count_per_year))+
 
 There is large variation in the snowshoe hare populations (min = 2 (2010), max = 126 (1999))(Figure 1). The overall trend of the data is skewed to the right. The number of observed snowshoe hares varies in each collection year (mean = 31 indiv. median = 18.5 indiv.). There are inconsistencies in the data that may have influences the results. In 2000, data was collected on 11 different days while in 2012, data was only collected on 2 days. For future collections, it would be beneficial to have a consistent number of sampling days each year.      
 
-
-### Exploring the relationship between sex and juvenile weight
+## 3. Results
+### A. Exploring the relationship between sex and juvenile weight
 ```{r}
 # juvenile weights by sex
 ggplot(data = juvenile, aes(x = grid, y = weight))+
@@ -127,7 +128,7 @@ juvenile_ttest
 cohen.d(juvenile_m, juvenile_f)
 ```
 
-### Exploring the relationship between juvenile weight and hind foot length
+### B. Exploring the relationship between juvenile weight and hind foot length
 
 
 ```{r, include=FALSE}
@@ -155,18 +156,18 @@ ggplot(data = juvenile, aes(x = hindft, y = weight))+
 ##### **Figure 4: The relationship between juvenile weight and hind foot length in snowshoe hares.** Data from all three sampling sites were combined. Linear model showing slope: 9.523 g / mm, p<0.001, R^2^ = 0.2988, Pearson's r = 0.547.  Data: Kielland et al. (2017).
 
 
-There is a slight linear relationship between juvenile snowshoe hare weight (grams) and hind foot length (millimeters)(Figure 4). A linear regression model shows the mild predictor between the two variables (p < 0.001, R^2^ = 0.2988) with a slope of 9.523 grams. Hind foot length and body mass have a slight positive correlation (Pearson's r = 0.547, p-value < 0.001). Diagnostic tests for normality were conducted. One assumption to be concerned with our data is homoscedasticity because there is variance among the amount that the points differ from the model. 
+There is a slight linear relationship between juvenile snowshoe hare weight (grams) and hind foot length (millimeters)(Figure 4). A linear regression model shows the mild predictor between the two variables (p < 0.001, R^2^ = 0.2988) with a slope of 9.523 grams. Hind foot length and body mass have a slight positive correlation (Pearson's r = 0.547, p-value < 0.001). Diagnostic tests for normality were conducted. One assumption to be concerned with our data is homoscedasticity because there is variance among the amount that the points differ from the model. The QQ plot shows some variation from linearity around the residuals below -1. 
 
 ```{r}
 juvenile_cor <- cor.test(juvenile$hindft, juvenile$weight)
 ```
 
-### Summary of Juvenile Hare Exploration
+## Summary of Juvenile Hare Exploration
 - There was an uneven number of juvenile hares caught at each site each year
 - On average, juvenile males weight more than juvenile females
 - There is a moderate positive relationship between weight and hind foot length
 
-### Next steps:
+## Next steps:
 - Conduct similar tests with adult snowshoe hares and see if similar trends appear
 - Compare weights and hind foot length between adults and juveniles
 
